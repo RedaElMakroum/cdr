@@ -281,7 +281,7 @@ def main():
     ds_scenarios = [
         ('Downstream', 'Full acceptance', 'full_acceptance'),
         ('', 'Rejection', 'rejection'),
-        ('', 'Partial commitment', 'partial_commitment'),
+        ('', 'High-target acceptance', 'partial_commitment'),
     ]
     us_scenarios = [
         ('Upstream', 'Availability update', 'availability_update'),

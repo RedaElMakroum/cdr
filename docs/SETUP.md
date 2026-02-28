@@ -47,7 +47,7 @@ Supported bidding zones: AT, DE_LU, FR, NL, BE, CH, IT_NORTH, ES, PT, DK_1, DK_2
 
 ```bash
 source venv/bin/activate
-python -c "from config import *; print('Config OK:', CEREBRAS_MODEL)"
+PYTHONPATH=src python -c "from config import *; print('Config OK:', CEREBRAS_MODEL)"
 ```
 
 If this prints the model name without errors, your configuration is correct.

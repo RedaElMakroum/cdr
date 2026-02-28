@@ -105,7 +105,7 @@ def run_orchestrator_stream():
             process = subprocess.Popen(
                 [
                     'bash', '-c',
-                    f'{venv_activate}python -u src/orchestrator_agent_react.py "{prompt}"'
+                    f'{venv_activate}python -u src/orchestrator_agent_react.py {shlex.quote(prompt)}'
                 ],
                 env=env,
                 cwd=work_dir,
@@ -360,7 +360,6 @@ def create_dr_event():
 
     result = dispatch_dr_event(
         household_id=data.get('household_id', 'HH-001'),
-        event_type=data.get('event_type', 'load_reduction'),
         window_start=data.get('window_start'),
         window_end=data.get('window_end'),
         target_kw=float(data.get('target_kw', 0)),
@@ -687,12 +686,6 @@ def list_all_runs():
 def run_battery_lab_stream():
     """Battery lab chat (not available in CDR release)."""
     return jsonify({'success': False, 'error': 'Battery lab chat not available in this release'}), 501
-        mimetype='text/event-stream',
-        headers={
-            'Cache-Control': 'no-cache',
-            'X-Accel-Buffering': 'no'
-        }
-    )
 
 
 if __name__ == '__main__':

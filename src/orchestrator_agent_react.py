@@ -340,9 +340,7 @@ ACTION: EXPLAIN_TO_PROSUMER
 
         if action_type == "GET_PRICES":
             print("\n   [Action] Fetching electricity prices...")
-            # Check if cached prices should be used (for systematic evaluation)
-            use_cached = os.environ.get('USE_CACHED_PRICES', 'false').lower() == 'true'
-            prices_data = get_electricity_prices(use_cached_prices=use_cached)
+            prices_data = get_electricity_prices()
             context["prices_data"] = prices_data
             return f"✓ Fetched {len(prices_data['prices'])} price points for {prices_data['date']}. Price range: {min(prices_data['prices']):.4f} - {max(prices_data['prices']):.4f} EUR/kWh. Prices stored in context."
 
