@@ -17,7 +17,7 @@ from event_logger import log_event
 
 
 # Base data directory
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(__file__).parent.parent / "data"
 
 
 def _load_aggregator_settings() -> Dict[str, Any]:

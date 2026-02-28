@@ -44,7 +44,7 @@ cp .env.example .env
 
 ```bash
 # Start the API server
-python api.py
+python src/api.py
 
 # Open the dashboard
 # Aggregator view: http://localhost:5001/?role=aggregator
@@ -98,28 +98,30 @@ See [EVALUATION_GUIDE.md](EVALUATION_GUIDE.md) for instructions on reproducing t
 
 ```
 cdr/
-  api.py                        # Flask API server
-  orchestrator_agent_react.py   # ReAct orchestrator + agent classes
-  tools.py                      # HEMS tool implementations
-  aggregator_tools.py           # Aggregator-side tools (DR dispatch, portfolio)
-  battery_optimizer.py          # MILP optimizer for battery scheduling
-  config.py                     # Configuration (reads from .env)
-  security.py                   # Input validation and rate limiting
-  event_logger.py               # Execution trace logger
-  entsoe_client.py              # ENTSO-E price data client
-  dashboard.html                # Single-page dashboard (aggregator + prosumer views)
   run_benchmark.py              # Benchmark runner (6 scenarios x N runs)
+  dashboard.html                # Single-page dashboard (aggregator + prosumer views)
 
-  # Agent system prompts
-  hems_orchestrator.md          # Main HEMS orchestrator prompt
-  battery_agent.md              # Battery specialist agent
-  washing_machine_agent.md      # Washing machine specialist
-  dishwasher_agent.md           # Dishwasher specialist
-  ev_charger_agent.md           # EV charger specialist
-  aggregator_orchestrator.md    # Aggregator orchestrator prompt
-  dr_event_handler.md           # DR event handler prompt
+  src/                          # Application code
+    api.py                      # Flask API server
+    orchestrator_agent_react.py # ReAct orchestrator + agent classes
+    tools.py                    # HEMS tool implementations
+    aggregator_tools.py         # Aggregator-side tools (DR dispatch, portfolio)
+    battery_optimizer.py        # MILP optimizer for battery scheduling
+    config.py                   # Configuration (reads from .env)
+    security.py                 # Input validation and rate limiting
+    event_logger.py             # Execution trace logger
+    entsoe_client.py            # ENTSO-E price data client
 
-  data/
+  prompts/                      # Agent system prompts
+    hems_orchestrator.md        # Main HEMS orchestrator prompt
+    battery_agent.md            # Battery specialist agent
+    washing_machine_agent.md    # Washing machine specialist
+    dishwasher_agent.md         # Dishwasher specialist
+    ev_charger_agent.md         # EV charger specialist
+    aggregator_orchestrator.md  # Aggregator orchestrator prompt
+    dr_event_handler.md         # DR event handler prompt
+
+  data/                         # Configuration and runtime data
     battery_state.json          # Battery parameters and current state
     aggregator_settings.json    # Aggregator configuration
     portfolio.json              # Aggregator household portfolio

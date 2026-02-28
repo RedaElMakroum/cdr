@@ -54,7 +54,7 @@ DEGRADATION_COST_EUR_KWH = 0.015
 # Small enough (~0.001 EUR/kW) to not affect cost-optimal decisions.
 PEAK_DISCHARGE_WEIGHT = 0.001
 
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(__file__).parent.parent / "data"
 PROFILES_DIR = DATA_DIR / "profiles"
 OPTIMIZER_RUNS_DIR = DATA_DIR / "runs" / "battery_optimizer"
 

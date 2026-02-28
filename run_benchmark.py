@@ -26,8 +26,9 @@ import numpy as np
 from datetime import datetime
 
 # Ensure we can import from the project
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+project_root = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(project_root, 'src'))
+os.chdir(project_root)
 
 from orchestrator_agent_react import OrchestratorAgentReAct
 from aggregator_tools import dispatch_dr_event, process_prosumer_message

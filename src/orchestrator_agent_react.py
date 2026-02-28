@@ -56,7 +56,7 @@ class OrchestratorAgentReAct:
     def _create_system_prompt(self) -> str:
         """Create system prompt with ReAct pattern instructions."""
         # Load base orchestrator prompt
-        prompt_path = Path(__file__).parent / "hems_orchestrator.md"
+        prompt_path = Path(__file__).parent.parent / "prompts" / "hems_orchestrator.md"
         with open(prompt_path, 'r') as f:
             base_prompt = f.read()
 
@@ -708,7 +708,8 @@ ACTION: EXPLAIN_TO_PROSUMER
         }
 
         # Save to model-specific subfolder
-        model_folder = f"data/runs/{self.model}"
+        project_root = str(Path(__file__).parent.parent)
+        model_folder = os.path.join(project_root, f"data/runs/{self.model}")
         os.makedirs(model_folder, exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filepath = f"{model_folder}/run_{timestamp}.json"
@@ -1455,7 +1456,7 @@ class AggregatorAgentReAct:
 
     def _create_system_prompt(self) -> str:
         """Create system prompt with ReAct pattern for aggregator."""
-        prompt_path = Path(__file__).parent / "aggregator_orchestrator.md"
+        prompt_path = Path(__file__).parent.parent / "prompts" / "aggregator_orchestrator.md"
         with open(prompt_path, 'r') as f:
             base_prompt = f.read()
 
@@ -1756,7 +1757,8 @@ CRITICAL: Only dispatch DR events when the operator gives an explicit, actionabl
             "final_summary": result.get("final_summary", "")
         }
 
-        model_folder = f"data/runs/aggregator/{self.model}"
+        project_root = str(Path(__file__).parent.parent)
+        model_folder = os.path.join(project_root, f"data/runs/aggregator/{self.model}")
         os.makedirs(model_folder, exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filepath = f"{model_folder}/run_{timestamp}.json"
@@ -1992,7 +1994,7 @@ class DREventHandlerAgentReAct:
 
     def _create_system_prompt(self) -> str:
         """Create system prompt with ReAct pattern for DR event handling."""
-        prompt_path = Path(__file__).parent / "dr_event_handler.md"
+        prompt_path = Path(__file__).parent.parent / "prompts" / "dr_event_handler.md"
         with open(prompt_path, 'r') as f:
             base_prompt = f.read()
 
@@ -2304,7 +2306,8 @@ Note: Wholesale electricity prices are NOT needed here. This is explicit demand 
             "final_summary": result.get("final_summary", "")
         }
 
-        model_folder = f"data/runs/dr_handler/{self.model}"
+        project_root = str(Path(__file__).parent.parent)
+        model_folder = os.path.join(project_root, f"data/runs/dr_handler/{self.model}")
         os.makedirs(model_folder, exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filepath = f"{model_folder}/run_{timestamp}.json"

@@ -849,7 +849,7 @@ def call_appliance_agent(
 
     # Load agent's system prompt
     agent_file = AVAILABLE_APPLIANCES[appliance_id]["agent_file"]
-    prompt_path = Path(__file__).parent / agent_file
+    prompt_path = Path(__file__).parent.parent / "prompts" / agent_file
 
     if not prompt_path.exists():
         return {

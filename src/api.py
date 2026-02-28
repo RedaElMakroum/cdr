@@ -8,7 +8,11 @@ from flask_limiter.util import get_remote_address
 import subprocess
 import os
 import json
+from pathlib import Path
 from datetime import datetime
+
+# Project root (one level up from src/)
+PROJECT_ROOT = str(Path(__file__).parent.parent)
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for local development
@@ -26,7 +30,7 @@ limiter = Limiter(
 @limiter.exempt
 def serve_dashboard():
     """Serve the dashboard HTML file."""
-    return send_file('dashboard.html')
+    return send_file(os.path.join(PROJECT_ROOT, 'dashboard.html'))
 
 
 @app.route('/api/run', methods=['POST'])
@@ -38,7 +42,7 @@ def run_orchestrator():
 
     try:
         # Set working directory (container-aware)
-        work_dir = os.environ.get('HEMS_WORK_DIR') or os.path.dirname(os.path.abspath(__file__))
+        work_dir = os.environ.get('HEMS_WORK_DIR') or PROJECT_ROOT
 
         # Virtual environment activation (only for local development)
         venv_path = os.environ.get('VENV_PATH', '')
@@ -48,7 +52,7 @@ def run_orchestrator():
         result = subprocess.run(
             [
                 'bash', '-c',
-                f'{venv_activate}python orchestrator_agent_react.py "{prompt}"'
+                f'{venv_activate}python src/orchestrator_agent_react.py "{prompt}"'
             ],
             cwd=work_dir,
             capture_output=True,
@@ -87,7 +91,7 @@ def run_orchestrator_stream():
     def generate():
         try:
             # Set working directory (container-aware)
-            work_dir = os.environ.get('HEMS_WORK_DIR') or os.path.dirname(os.path.abspath(__file__))
+            work_dir = os.environ.get('HEMS_WORK_DIR') or PROJECT_ROOT
 
             # Virtual environment activation (only for local development)
             venv_path = os.environ.get('VENV_PATH', '')
@@ -282,7 +286,7 @@ def run_aggregator_stream():
 
     def generate():
         try:
-            work_dir = os.environ.get('HEMS_WORK_DIR') or os.path.dirname(os.path.abspath(__file__))
+            work_dir = os.environ.get('HEMS_WORK_DIR') or PROJECT_ROOT
             venv_path = os.environ.get('VENV_PATH', '')
             venv_activate = f'source {venv_path}/bin/activate && ' if os.path.exists(venv_path) else ''
 
@@ -412,7 +416,7 @@ def respond_to_dr_event_stream(event_id):
 
     def generate():
         try:
-            work_dir = os.environ.get('HEMS_WORK_DIR') or os.path.dirname(os.path.abspath(__file__))
+            work_dir = os.environ.get('HEMS_WORK_DIR') or PROJECT_ROOT
             venv_path = os.environ.get('VENV_PATH', '')
             venv_activate = f'source {venv_path}/bin/activate && ' if os.path.exists(venv_path) else ''
 
@@ -586,7 +590,7 @@ def get_portfolio():
 def list_all_runs():
     """List all agent runs (prosumer + aggregator) with metadata."""
     import glob
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = PROJECT_ROOT
     runs = []
 
     # Prosumer (HEMS) runs: data/runs/<model>/*.json
@@ -689,7 +693,7 @@ def run_battery_lab_stream():
 
     def generate():
         try:
-            work_dir = os.environ.get('HEMS_WORK_DIR') or os.path.dirname(os.path.abspath(__file__))
+            work_dir = os.environ.get('HEMS_WORK_DIR') or PROJECT_ROOT
             venv_path = os.environ.get('VENV_PATH', '')
             venv_activate = f'source {venv_path}/bin/activate && ' if os.path.exists(venv_path) else ''
 

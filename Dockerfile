@@ -22,8 +22,8 @@ EXPOSE 5001
 
 # Environment variables
 ENV PYTHONUNBUFFERED=1
-ENV FLASK_APP=api.py
+ENV FLASK_APP=src/api.py
 ENV HEMS_WORK_DIR=/app
 
 # Run API server
-CMD ["python", "api.py"]
+CMD ["python", "src/api.py"]

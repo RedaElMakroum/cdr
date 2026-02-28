@@ -56,7 +56,7 @@ If this prints the model name without errors, your configuration is correct.
 
 ```bash
 # Start the API server
-python api.py
+python src/api.py
 
 # Open in browser:
 # Aggregator view: http://localhost:5001/?role=aggregator

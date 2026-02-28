@@ -73,7 +73,7 @@ docker compose exec cdr-api curl http://localhost:5001/api/health
 
 ### "ModuleNotFoundError: No module named 'config'"
 - Ensure you are running from the project root directory
-- The script should be executed as `python api.py`, not from a subdirectory
+- The script should be executed as `python src/api.py`, not from a subdirectory
 
 ### Missing dependencies
 ```bash
