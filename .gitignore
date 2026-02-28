@@ -1,0 +1,52 @@
+# Environment variables (API keys)
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+security_log.txt
+
+# Runtime data (generated during operation)
+data/runs/
+data/dr_events/
+data/dr_responses/
+data/household_requests/
+data/event_logs/
+data/schedules.json
+data/portfolio_sandbox.json
+data/entsoe_debug.xml
+
+# Benchmark results (reproduce with run_benchmark.py)
+data/benchmark_results_*.json
+
+# Cached prices
+saved_prices_*.json
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OAuth tokens (not used in CDR, but just in case)
+token.json
+credentials.json

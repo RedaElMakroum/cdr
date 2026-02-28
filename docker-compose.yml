@@ -1,0 +1,30 @@
+services:
+  cdr-api:
+    build: .
+    container_name: cdr-api
+    ports:
+      - "5001:5001"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  cdr-dashboard:
+    image: python:3.11-slim
+    container_name: cdr-dashboard
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: python -m http.server 8000
+    restart: unless-stopped

@@ -1,0 +1,25 @@
+{
+  "event_id": "DR-EXAMPLE-001",
+  "household_id": "HH-001",
+  "event_type": "battery_discharge",
+  "window_start": "17:00",
+  "window_start_slot": 68,
+  "window_end": "19:00",
+  "window_end_slot": 76,
+  "duration_slots": 8,
+  "target_kw": 3.0,
+  "compensation_eur_kwh": 0.2,
+  "max_compensation_eur": 1.2,
+  "status": "accepted",
+  "created_at": "2026-01-15T10:00:00.000000",
+  "responded_at": "2026-01-15T10:01:30.000000",
+  "response": {
+    "event_id": "DR-EXAMPLE-001",
+    "status": "accepted",
+    "commitment_kw": 3.0,
+    "accepted_appliances": ["battery"],
+    "reasoning": "Battery can fully meet the 3 kW request for the 2-hour window (17:00-19:00), delivering 6 kWh and earning 1.20 EUR compensation.",
+    "conversation_summary": "",
+    "responded_at": "2026-01-15T10:01:30.000000"
+  }
+}

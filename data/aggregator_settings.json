@@ -1,0 +1,5 @@
+{
+  "default_compensation_eur_kwh": 0.20,
+  "portfolio_file": "portfolio.json",
+  "bidding_zone": "AT"
+}

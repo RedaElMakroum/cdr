@@ -1,0 +1,11 @@
+{
+  "battery_id": "BAT-001",
+  "capacity_kwh": 15.0,
+  "current_soc_kwh": 4.5,
+  "current_soc_pct": 30,
+  "max_charge_kw": 8.0,
+  "max_discharge_kw": 8.0,
+  "min_soc_pct": 20,
+  "round_trip_efficiency": 0.92,
+  "pv_forecast_kwh": 8.5
+}

@@ -1,0 +1,24 @@
+{
+    "households": [
+        {
+            "household_id": "HH-001",
+            "name": "Household 1",
+            "location": "Vienna, Austria",
+            "assets": [
+                {
+                    "asset_id": "battery",
+                    "type": "home_battery",
+                    "capacity_kwh": 15.0,
+                    "power_kw": 8.0
+                }
+            ],
+            "total_flexible_capacity_kw": 8.0,
+            "prosumer_profile": {
+                "type": "price_sensitive",
+                "comfort_priority": "medium",
+                "preferred_contact": "conversational"
+            },
+            "api_endpoint": "http://localhost:5000"
+        }
+    ]
+}

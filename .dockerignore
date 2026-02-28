@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Runtime data
+data/runs/
+data/dr_events/
+data/dr_responses/
+data/household_requests/
+data/event_logs/
+data/portfolio_sandbox.json
+*.log
+
+# OAuth credentials
+token.json
+credentials.json
+
+# Misc
+.DS_Store
+*.tmp

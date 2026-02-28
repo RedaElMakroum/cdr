@@ -1,0 +1,26 @@
+{
+  "request_id": "REQ-EXAMPLE-001",
+  "household_id": "HH-001",
+  "type": "availability_update",
+  "message": "I'm away on holiday next week. Maximize revenue from my battery and EV.",
+  "details": {
+    "llm_parsed": {
+      "request_type": "availability_update",
+      "summary": "Prosumer will be away next week and wants to maximize revenue from battery and EV.",
+      "portfolio_changes": [
+        {
+          "type": "update_availability",
+          "updates": {
+            "away_next_week": true
+          }
+        }
+      ],
+      "confirmation_message": "Got it! I've noted that you'll be away next week. We'll focus on getting the most revenue possible from your battery and EV while you're on holiday."
+    }
+  },
+  "status": "pending",
+  "triage": null,
+  "triage_action": null,
+  "created_at": "2026-01-15T12:00:00.000000",
+  "triaged_at": null
+}
