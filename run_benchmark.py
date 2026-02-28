@@ -217,10 +217,10 @@ def main():
 
     time.sleep(DELAY_BETWEEN_SCENARIOS)
 
-    # 3. Partial commitment: request 5kW but battery inverter is 8kW, capacity
-    #    only allows ~1.5kWh sustained. HEMS should counter-offer.
+    # 3. High-target acceptance: request 5kW. MILP optimizer pre-charges
+    #    from PV before the DR window, enabling full commitment.
     all_results['partial_commitment'] = run_downstream(
-        "Partial commitment", target_kw=5.0
+        "High-target acceptance", target_kw=5.0
     )
 
     # ---- UPSTREAM SCENARIOS ----

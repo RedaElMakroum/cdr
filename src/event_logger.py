@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 
-LOG_DIR = Path(__file__).parent / "data" / "event_logs"
+LOG_DIR = Path(__file__).parent.parent / "data" / "event_logs"
 
 
 def log_event(event_id: str, source: str, action: str, model: str = None, details: dict = None):

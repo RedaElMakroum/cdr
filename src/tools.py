@@ -21,13 +21,12 @@ except ImportError:
     CALENDAR_AVAILABLE = False
 
 
-def get_electricity_prices(date: Optional[str] = None, use_cached_prices: bool = False) -> Dict[str, Any]:
+def get_electricity_prices(date: Optional[str] = None) -> Dict[str, Any]:
     """
     Retrieves day-ahead electricity prices for the specified date.
 
     Args:
         date: Date in YYYY-MM-DD format. If None, returns tomorrow's prices.
-        use_cached_prices: If True, loads from test_prices_reference.json (for benchmarking)
 
     Returns:
         Dictionary containing:
@@ -37,18 +36,6 @@ def get_electricity_prices(date: Optional[str] = None, use_cached_prices: bool =
         - timeslots: List of time labels (e.g., ["00:00", "00:15", ...])
         - prices: List of 96 price values
     """
-    # Use cached reference prices if requested (for systematic evaluation)
-    if use_cached_prices:
-        cache_path = Path(__file__).parent / "test_prices_reference.json"
-        if cache_path.exists():
-            with open(cache_path, 'r') as f:
-                price_data = json.load(f)
-            print(f"✓ Loaded cached reference prices from {cache_path.name}")
-            print(f"  Date: {price_data['date']}, {len(price_data['prices'])} price points")
-            return price_data
-        else:
-            print(f"⚠ Cached prices not found at {cache_path}, falling back to API fetch")
-
     # Try to fetch from ENTSO-E API
     try:
         from entsoe_client import fetch_entsoe_prices
@@ -67,124 +54,14 @@ def get_electricity_prices(date: Optional[str] = None, use_cached_prices: bool =
             print(f"✓ Successfully fetched {len(result['prices'])} price points from ENTSO-E")
             return result
     except Exception as e:
-        # Fallback to mock data if API fails
         print(f"⚠ ENTSO-E API failed: {type(e).__name__}: {e}")
-        print("Falling back to mock data...")
-
-    # Fallback: Read from mock file
-    data_path = Path(__file__).parent / "data" / "prices_sample.json"
-    with open(data_path, 'r') as f:
-        price_data = json.load(f)
-
-    return price_data
-
-
-def get_weather_forecast(
-    location: str = "Vienna",
-    date: Optional[str] = None
-) -> Dict[str, Any]:
-    """
-    Retrieves hourly outdoor temperature forecast for the specified date.
-
-    Args:
-        location: City name (default: "Vienna")
-        date: Date in YYYY-MM-DD format. If None, returns tomorrow's forecast.
-
-    Returns:
-        Dictionary containing:
-        - date: The date for this forecast
-        - location: Location name
-        - temps_hourly: List of 24 hourly temperatures in Celsius
-        - temps_min: Minimum temperature
-        - temps_max: Maximum temperature
-    """
-    # Vienna, Austria coordinates
-    LOCATIONS = {
-        "Vienna": {"lat": 48.2082, "lon": 16.3738}
-    }
-
-    if location not in LOCATIONS:
-        location = "Vienna"
-
-    coords = LOCATIONS[location]
-
-    # Parse target date
-    if date is None:
-        target_date = datetime.now() + timedelta(days=1)
-    else:
-        target_date = datetime.strptime(date, "%Y-%m-%d")
-
-    date_str = target_date.strftime("%Y-%m-%d")
-
-    try:
-        # Use Open-Meteo API (free, no API key required)
-        # Request 15-minute resolution to match electricity price resolution
-        url = "https://api.open-meteo.com/v1/forecast"
-        params = {
-            "latitude": coords["lat"],
-            "longitude": coords["lon"],
-            "minutely_15": "temperature_2m",
-            "start_date": date_str,
-            "end_date": date_str,
-            "timezone": "Europe/Vienna"
-        }
-
-        print(f"Fetching weather forecast (15-min resolution) for {location} on {date_str}...")
-        response = requests.get(url, params=params, timeout=30)
-        response.raise_for_status()
-
-        data = response.json()
-
-        # Extract 15-minute temperatures (should be 96 values for 24 hours)
-        temps_15min = data["minutely_15"]["temperature_2m"]
-
-        # Ensure we have 96 values (24h * 4 per hour)
-        if len(temps_15min) < 96:
-            temps_15min.extend([temps_15min[-1]] * (96 - len(temps_15min)))
-        temps_15min = temps_15min[:96]
-
-        print(f"✓ Fetched 96 temperature values (15-min): {min(temps_15min):.1f}°C - {max(temps_15min):.1f}°C")
-
         return {
-            "date": date_str,
-            "location": location,
-            "temps_15min": temps_15min,
-            "temps_min": min(temps_15min),
-            "temps_max": max(temps_15min),
-            "unit": "Celsius",
-            "resolution_minutes": 15
-        }
-
-    except Exception as e:
-        print(f"⚠ Weather API failed: {type(e).__name__}: {e}")
-        print("Using fallback temperature data...")
-
-        # Fallback: typical winter day in Vienna (96 values at 15-min resolution)
-        # Pattern: gradual cooling at night, warming during day, cooling in evening
-        hourly_pattern = [
-            2, 1, 0, 0, -1, -1, 0, 1,  # 00:00 - 07:00 (night, coldest)
-            3, 5, 7, 8, 9, 10, 10, 9,  # 08:00 - 15:00 (day, warming)
-            7, 5, 4, 3, 2, 2, 2, 1     # 16:00 - 23:00 (evening, cooling)
-        ]
-
-        # Expand to 15-minute resolution (repeat each hourly value 4 times)
-        fallback_temps = []
-        for temp in hourly_pattern:
-            fallback_temps.extend([temp] * 4)
-
-        return {
-            "date": date_str,
-            "location": location,
-            "temps_15min": fallback_temps,
-            "temps_min": min(fallback_temps),
-            "temps_max": max(fallback_temps),
-            "unit": "Celsius",
-            "resolution_minutes": 15,
-            "fallback": True
+            "success": False,
+            "error": f"Failed to fetch prices: {e}"
         }
 
 
-def calculate_heating_requirement(
+def schedule_appliance(
     outdoor_temps: List[float],
     comfort_min: float = 20.0,
     comfort_max: float = 22.0,
@@ -431,7 +308,7 @@ def schedule_appliance(
     }
 
     # Save schedule to file for record keeping
-    schedule_path = Path(__file__).parent / "data" / "schedules.json"
+    schedule_path = Path(__file__).parent.parent / "data" / "schedules.json"
     schedules = []
 
     if schedule_path.exists():
@@ -722,7 +599,7 @@ def get_battery_state() -> Dict[str, Any]:
         - pv_forecast_kwh: Forecasted PV generation in kWh
         - available_energy_kwh: Energy available above min SoC
     """
-    state_path = Path(__file__).parent / "data" / "battery_state.json"
+    state_path = Path(__file__).parent.parent / "data" / "battery_state.json"
 
     if not state_path.exists():
         return {
@@ -889,49 +766,7 @@ def call_appliance_agent(
     else:
         prices_text = "No price data available (DR event -- compensation provided by aggregator)."
 
-    # Special handling for heat pump agent - needs weather and thermal model
     additional_context = ""
-    if appliance_id == "heat_pump" and prices_data:
-        print(f"     → Heat pump agent requires weather and thermal analysis...")
-
-        # Get weather forecast
-        weather_data = get_weather_forecast(location="Vienna", date=prices_data['date'])
-
-        # Get building parameters from config
-        building_type = AVAILABLE_APPLIANCES[appliance_id].get("building_type", "old")
-        comfort_min = AVAILABLE_APPLIANCES[appliance_id].get("comfort_min", 20.0)
-        comfort_max = AVAILABLE_APPLIANCES[appliance_id].get("comfort_max", 22.0)
-
-        # Calculate heating requirements using thermal model
-        thermal_data = calculate_heating_requirement(
-            outdoor_temps=weather_data['temps_15min'],
-            comfort_min=comfort_min,
-            comfort_max=comfort_max,
-            building_type=building_type
-        )
-
-        # Format thermal and weather data for agent
-        additional_context = (
-            f"\n\n{'='*60}\n"
-            f"WEATHER FORECAST:\n"
-            f"{'='*60}\n"
-            f"Location: {weather_data['location']}\n"
-            f"Date: {weather_data['date']}\n"
-            f"Temperature range: {weather_data['temps_min']:.1f}°C - {weather_data['temps_max']:.1f}°C\n"
-            f"Outdoor temperatures (96 slots, 15-min resolution):\n{weather_data['temps_15min']}\n"
-            f"\n{'='*60}\n"
-            f"THERMAL MODEL ANALYSIS:\n"
-            f"{'='*60}\n"
-            f"Building type: {thermal_data['building_type']}\n"
-            f"Comfort range: {thermal_data['comfort_range'][0]}°C - {thermal_data['comfort_range'][1]}°C\n"
-            f"Heating slots needed: {thermal_data['heating_slots_needed']} slots ({thermal_data['heating_hours_needed']:.1f} hours)\n"
-            f"Estimated energy requirement: {thermal_data['estimated_total_power_kwh']:.2f} kWh\n"
-            f"Heat pump power: {thermal_data['heat_pump_power_kw']} kW\n"
-            f"\nSlots requiring heating (slot indices):\n{thermal_data['slots_requiring_heat']}\n"
-            f"\nBuilding parameters:\n"
-            f"  - Average U-value: {thermal_data['building_params']['total_u_value_avg']} W/m²K\n"
-            f"  - Infiltration rate: {thermal_data['building_params']['infiltration_rate']} ACH\n"
-        )
 
     # Call LLM with agent's system prompt
     headers = {

@@ -33,7 +33,11 @@ class ENTSOEClient:
         """
         self.api_key = api_key
         self.zone_code = self.BIDDING_ZONES.get(bidding_zone, bidding_zone)
-        self.timezone = pytz.timezone("Europe/Vienna")  # Adjust based on zone
+        ZONE_TIMEZONES = {
+            "AT": "Europe/Vienna", "DE": "Europe/Berlin",
+            "NL": "Europe/Amsterdam", "BE": "Europe/Brussels",
+        }
+        self.timezone = pytz.timezone(ZONE_TIMEZONES.get(bidding_zone, "Europe/Vienna"))
 
     def get_day_ahead_prices(
         self,

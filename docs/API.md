@@ -9,7 +9,7 @@ Health check. No rate limit.
 
 **Response:**
 ```json
-{"status": "healthy", "version": "2.0"}
+{"status": "ok"}
 ```
 
 ## HEMS Orchestration
@@ -20,7 +20,7 @@ Run the HEMS orchestrator (blocking). Rate limit: 20/min.
 **Body:**
 ```json
 {
-  "message": "Schedule my washing machine for lowest cost",
+  "prompt": "Schedule my washing machine for lowest cost",
   "model": "gpt-oss-120b"
 }
 ```

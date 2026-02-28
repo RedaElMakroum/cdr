@@ -6,6 +6,7 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import subprocess
+import shlex
 import os
 import json
 from pathlib import Path
@@ -52,7 +53,7 @@ def run_orchestrator():
         result = subprocess.run(
             [
                 'bash', '-c',
-                f'{venv_activate}python src/orchestrator_agent_react.py "{prompt}"'
+                f'{venv_activate}python src/orchestrator_agent_react.py {shlex.quote(prompt)}'
             ],
             cwd=work_dir,
             capture_output=True,
@@ -104,7 +105,7 @@ def run_orchestrator_stream():
             process = subprocess.Popen(
                 [
                     'bash', '-c',
-                    f'{venv_activate}python -u orchestrator_agent_react.py "{prompt}"'
+                    f'{venv_activate}python -u src/orchestrator_agent_react.py "{prompt}"'
                 ],
                 env=env,
                 cwd=work_dir,
@@ -296,7 +297,7 @@ def run_aggregator_stream():
             process = subprocess.Popen(
                 [
                     'bash', '-c',
-                    f'{venv_activate}python -u orchestrator_agent_react.py --aggregator "{prompt}"'
+                    f'{venv_activate}python -u src/orchestrator_agent_react.py --aggregator {shlex.quote(prompt)}'
                 ],
                 env=env,
                 cwd=work_dir,
@@ -334,7 +335,7 @@ def run_aggregator_stream():
 def list_dr_events():
     """List all DR events with their current status."""
     import glob
-    events_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'dr_events')
+    events_dir = os.path.join(PROJECT_ROOT, 'data', 'dr_events')
 
     if not os.path.exists(events_dir):
         return jsonify({'success': True, 'events': []})
@@ -384,7 +385,7 @@ def get_dr_event_response(event_id):
 @limiter.limit("30 per minute")
 def get_dr_event_log(event_id):
     """Get the lifecycle event log for a specific DR event."""
-    log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'event_logs', f'{event_id}.jsonl')
+    log_path = os.path.join(PROJECT_ROOT, 'data', 'event_logs', f'{event_id}.jsonl')
     if not os.path.exists(log_path):
         return jsonify({'success': False, 'error': 'No event log found', 'entries': []})
     entries = []
@@ -423,9 +424,8 @@ def respond_to_dr_event_stream(event_id):
             env = os.environ.copy()
             env['CEREBRAS_MODEL_OVERRIDE'] = model
 
-            import shlex
             # Pass event_id and optional prosumer follow-up message
-            cmd = f'{venv_activate}python -u orchestrator_agent_react.py --dr-handler "{event_id}"'
+            cmd = f'{venv_activate}python -u src/orchestrator_agent_react.py --dr-handler {shlex.quote(event_id)}'
             if prosumer_message:
                 cmd += f' --followup {shlex.quote(prosumer_message)}'
 
@@ -507,7 +507,7 @@ def create_household_request():
 def list_household_requests():
     """List all household requests (for aggregator inbox)."""
     import glob
-    requests_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'household_requests')
+    requests_dir = os.path.join(PROJECT_ROOT, 'data', 'household_requests')
 
     if not os.path.exists(requests_dir):
         return jsonify({'success': True, 'requests': []})
@@ -524,7 +524,7 @@ def list_household_requests():
 @limiter.limit("30 per minute")
 def acknowledge_household_request(request_id):
     """Mark a household request as acknowledged."""
-    requests_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'household_requests')
+    requests_dir = os.path.join(PROJECT_ROOT, 'data', 'household_requests')
     req_file = os.path.join(requests_dir, f'{request_id}.json')
 
     if not os.path.exists(req_file):
@@ -685,53 +685,8 @@ def list_all_runs():
 @app.route('/api/battery/stream', methods=['POST'])
 @limiter.limit("30 per minute")
 def run_battery_lab_stream():
-    """Run the battery lab chat agent with real-time streaming output."""
-    data = request.json
-    message = data.get('message', '')
-    history = data.get('history', [])
-    model = data.get('model', 'gpt-oss-120b')
-
-    def generate():
-        try:
-            work_dir = os.environ.get('HEMS_WORK_DIR') or PROJECT_ROOT
-            venv_path = os.environ.get('VENV_PATH', '')
-            venv_activate = f'source {venv_path}/bin/activate && ' if os.path.exists(venv_path) else ''
-
-            env = os.environ.copy()
-            env['CEREBRAS_MODEL_OVERRIDE'] = model
-
-            # Pass message and history as command-line args
-            escaped_message = message.replace('"', '\\"').replace("'", "'\\''")
-            history_json = json.dumps(history).replace("'", "'\\''")
-
-            process = subprocess.Popen(
-                [
-                    'bash', '-c',
-                    f"{venv_activate}python -u battery_agent_chat.py '{escaped_message}' '{history_json}'"
-                ],
-                env=env,
-                cwd=work_dir,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                bufsize=1,
-                universal_newlines=True
-            )
-
-            for line in iter(process.stdout.readline, ''):
-                if line:
-                    yield f"data: {json.dumps({'type': 'stdout', 'content': line})}\n\n"
-
-            process.wait(timeout=300)
-            yield f"data: {json.dumps({'type': 'done', 'returncode': process.returncode})}\n\n"
-
-        except subprocess.TimeoutExpired:
-            yield f"data: {json.dumps({'type': 'error', 'content': 'Timeout after 5 minutes'})}\n\n"
-        except Exception as e:
-            yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
-
-    return Response(
-        stream_with_context(generate()),
+    """Battery lab chat (not available in CDR release)."""
+    return jsonify({'success': False, 'error': 'Battery lab chat not available in this release'}), 501
         mimetype='text/event-stream',
         headers={
             'Cache-Control': 'no-cache',
@@ -779,4 +734,4 @@ if __name__ == '__main__':
     print("")
     print("  GET  /api/health              - Health check (no limit)")
     print("=" * 80)
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=os.environ.get('FLASK_DEBUG', 'false').lower() == 'true')

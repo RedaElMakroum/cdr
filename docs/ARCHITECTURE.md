@@ -106,17 +106,15 @@ The battery optimizer (`battery_optimizer.py`) formulates a mixed-integer linear
 - **Decision variables**: Charge/discharge power per 15-minute slot
 - **Objective**: Minimize electricity cost (or maximize revenue during DR)
 - **Constraints**: SoC bounds, power limits, efficiency losses, DR commitment window
-- **Solver**: `scipy.optimize.linprog`
+- **Solver**: PuLP with CBC (COIN-OR Branch and Cut)
 
 When evaluating DR feasibility, it checks whether the battery can meet the requested discharge target while respecting minimum SoC and considering PV generation for pre-charging.
 
 ## Security
 
 Input validation (`security.py`):
-- Message length limit (150 characters, 30 words)
-- 50+ regex patterns for injection detection
-- Risk assessment scoring
-- XML wrapping for safe LLM input
+- `SecurityValidator` class with 50+ regex injection patterns (available but disabled in current release for research flexibility)
+- API rate limiting provides the primary protection layer
 
 API rate limiting (Flask-Limiter):
 - Global: 200/day, 50/hour

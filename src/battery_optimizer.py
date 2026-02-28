@@ -45,8 +45,7 @@ FEED_IN_TARIFF = 0.04  # EUR/kWh -- low feed-in typical of post-subsidy European
 
 # Battery degradation cost (throughput model)
 # C_deg = replacement_cost / (2 * capacity_kwh * max_cycles)
-# Assumes ~8000 EUR replacement, 15 kWh, 6000 cycles -> ~0.044 EUR/kWh
-# This penalizes every kWh cycled, discouraging unnecessary charge/discharge
+# Conservative estimate: penalizes every kWh cycled to discourage unnecessary throughput
 DEGRADATION_COST_EUR_KWH = 0.015
 
 # Peak-discharge smoothing weight (standard power-systems practice)

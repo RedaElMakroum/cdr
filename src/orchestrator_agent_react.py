@@ -949,7 +949,7 @@ ACTION: EXPLAIN_TO_PROSUMER
         print("=" * 80)
 
         # Load DR event
-        event_path = Path(__file__).parent / "data" / "dr_events" / f"{event_id}.json"
+        event_path = Path(__file__).parent.parent / "data" / "dr_events" / f"{event_id}.json"
         if not event_path.exists():
             return {
                 "success": False,
@@ -1229,7 +1229,7 @@ ACTION: EXPLAIN_TO_PROSUMER
 
     def _save_conversation_history(self, event_id, messages):
         """Save conversation history to the DR event JSON file for follow-up turns."""
-        event_path = Path(__file__).parent / "data" / "dr_events" / f"{event_id}.json"
+        event_path = Path(__file__).parent.parent / "data" / "dr_events" / f"{event_id}.json"
         if not event_path.exists():
             print(f"[Warning] Cannot save conversation history: {event_id} not found")
             return
@@ -1268,7 +1268,7 @@ ACTION: EXPLAIN_TO_PROSUMER
         print("=" * 80)
 
         # Load DR event JSON
-        event_path = Path(__file__).parent / "data" / "dr_events" / f"{event_id}.json"
+        event_path = Path(__file__).parent.parent / "data" / "dr_events" / f"{event_id}.json"
         if not event_path.exists():
             return {
                 "success": False,
@@ -1433,7 +1433,7 @@ class AggregatorAgentReAct:
 
     def _build_portfolio_summary(self) -> str:
         """Build portfolio summary from data/portfolio.json."""
-        portfolio_path = Path(__file__).parent / "data" / "portfolio.json"
+        portfolio_path = Path(__file__).parent.parent / "data" / "portfolio.json"
         try:
             with open(portfolio_path, 'r') as f:
                 portfolio = json.load(f)
@@ -2337,7 +2337,7 @@ Note: Wholesale electricity prices are NOT needed here. This is explicit demand 
         print("=" * 80)
 
         # Load DR event
-        event_path = Path(__file__).parent / "data" / "dr_events" / f"{event_id}.json"
+        event_path = Path(__file__).parent.parent / "data" / "dr_events" / f"{event_id}.json"
         if not event_path.exists():
             return {
                 "success": False,
@@ -2557,7 +2557,7 @@ Note: Wholesale electricity prices are NOT needed here. This is explicit demand 
 
     def _save_conversation_history(self, event_id, messages):
         """Save conversation history to the DR event JSON file for follow-up turns."""
-        event_path = Path(__file__).parent / "data" / "dr_events" / f"{event_id}.json"
+        event_path = Path(__file__).parent.parent / "data" / "dr_events" / f"{event_id}.json"
         if not event_path.exists():
             print(f"[Warning] Cannot save conversation history: {event_id} not found")
             return
@@ -2597,7 +2597,7 @@ Note: Wholesale electricity prices are NOT needed here. This is explicit demand 
         print("=" * 80)
 
         # Load DR event JSON
-        event_path = Path(__file__).parent / "data" / "dr_events" / f"{event_id}.json"
+        event_path = Path(__file__).parent.parent / "data" / "dr_events" / f"{event_id}.json"
         if not event_path.exists():
             return {
                 "success": False,

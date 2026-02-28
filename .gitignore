@@ -47,6 +47,10 @@ saved_prices_*.json
 # Jupyter
 .ipynb_checkpoints/
 
+# Testing / type checking
+.pytest_cache/
+.mypy_cache/
+
 # OAuth tokens (not used in CDR, but just in case)
 token.json
 credentials.json

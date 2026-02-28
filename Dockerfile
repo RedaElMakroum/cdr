@@ -14,8 +14,14 @@ COPY requirements.txt requirements-api.txt ./
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt -r requirements-api.txt
 
+# Create non-root user
+RUN useradd --create-home appuser
+
 # Copy application code
-COPY . .
+COPY --chown=appuser:appuser . .
+
+# Switch to non-root user
+USER appuser
 
 # Expose port
 EXPOSE 5001

@@ -24,7 +24,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - ./dashboard.html:/app/dashboard.html:ro
     working_dir: /app
     command: python -m http.server 8000
     restart: unless-stopped

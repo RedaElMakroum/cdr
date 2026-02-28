@@ -132,6 +132,16 @@ cdr/
   docs/                         # Documentation
 ```
 
+## Data
+
+The `data/profiles/` directory contains 15-minute resolution profiles for a single household:
+
+- `household_demand.csv` -- Residential load profile (~20 kWh/day), based on Austrian standard load profiles
+- `pv_generation.csv` -- PV generation profile (~34 kWh/day peak, corresponding to a ~7 kWp system in Central Europe)
+- `electricity_price.csv` -- Day-ahead prices from the Austrian bidding zone (ENTSO-E), range 0.04--0.29 EUR/kWh
+
+All profiles use 96 time slots (24h at 15-minute resolution), consistent with European electricity market settlement periods.
+
 ## Documentation
 
 - [Setup Guide](docs/SETUP.md) -- API keys and environment configuration
