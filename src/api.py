@@ -681,12 +681,6 @@ def list_all_runs():
     return jsonify({'success': True, 'runs': runs, 'total': len(runs)})
 
 
-@app.route('/api/battery/stream', methods=['POST'])
-@limiter.limit("30 per minute")
-def run_battery_lab_stream():
-    """Battery lab chat (not available in CDR release)."""
-    return jsonify({'success': False, 'error': 'Battery lab chat not available in this release'}), 501
-
 
 if __name__ == '__main__':
     print("=" * 80)
@@ -711,7 +705,6 @@ if __name__ == '__main__':
     print("  POST /api/dr-event/<id>/submit-response - Submit decision (20 req/min)")
     print("")
     print("Battery Lab:")
-    print("  POST /api/battery/stream      - Battery lab chat (30 req/min)")
     print("")
     print("Bottom-Up:")
     print("  POST /api/household-request   - Household message (20 req/min)")

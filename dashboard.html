@@ -272,40 +272,13 @@
             gap: 24px;
         }
 
-        .sandbox-indicator {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 16px;
-            background: #2d3748;
-            border: 1px solid #4a5568;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #ecc94b;
-            margin-bottom: 8px;
-        }
 
-        :root.light .sandbox-indicator {
-            background: #fffff0;
-            border-color: #ecc94b;
-            color: #975a16;
-        }
 
-        .sandbox-indicator button {
-            margin-left: auto;
-            background: transparent;
-            border: 1px solid currentColor;
-            color: inherit;
-            padding: 4px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-family: inherit;
-        }
 
-        .sandbox-indicator button:hover {
-            background: rgba(236, 201, 75, 0.15);
-        }
+
+
+
+
 
         .prosumer-comm-bubble {
             max-width: 80%;
@@ -354,7 +327,7 @@
         }
 
         /* Aggregator View */
-        #aggregator-view, #battery-view {
+        #aggregator-view {
             flex-direction: column;
             height: 100vh;
             max-width: 1400px;
@@ -1325,6 +1298,11 @@
             content: '↓';
             opacity: 1;
         }
+    
+        @keyframes badge-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
 </head>
 <body>
@@ -1346,6 +1324,7 @@
                     <path d="M2 12l10 5 10-5"></path>
                 </svg>
                 <span>Aggregator</span>
+                <span id="agg-badge" style="display:none; margin-left:auto; background:#f59e0b; color:#000; font-size:11px; font-weight:700; min-width:20px; height:20px; line-height:20px; text-align:center; border-radius:99px; padding:0 5px;">!</span>
             </div>
 
             <div class="nav-item" id="nav-prosumer-comm" onclick="showView('prosumer-comm')">
@@ -1361,6 +1340,7 @@
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
                 <span>HEMS Chat</span>
+                <span id="dr-badge" style="display:none; margin-left:auto; background:#f59e0b; color:#000; font-size:11px; font-weight:700; min-width:20px; height:20px; line-height:20px; text-align:center; border-radius:99px; padding:0 5px;">!</span>
             </div>
 
             <div class="nav-item" id="nav-dr-events" onclick="showView('dr-events')">
@@ -1386,14 +1366,7 @@
                 <span>Analytics</span>
             </div>
 
-            <div class="nav-item" id="nav-battery" onclick="showView('battery')">
-                <svg class="nav-icon" viewBox="0 0 24 24">
-                    <rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect>
-                    <line x1="23" y1="13" x2="23" y2="11"></line>
-                    <rect x="4" y="9" width="6" height="6" fill="currentColor" opacity="0.5"></rect>
-                </svg>
-                <span>Battery Lab</span>
-            </div>
+
 
             <div class="nav-item" id="nav-details" onclick="showView('details')">
                 <svg class="nav-icon" viewBox="0 0 24 24">
@@ -1406,7 +1379,7 @@
             <div class="sidebar-bottom">
                 <div class="sidebar-footer">
                     <div class="license-info">Open Source • MIT License</div>
-                    <div class="copyright">© 2025 Reda El Makroum</div>
+                    <div class="copyright">© 2026 Reda El Makroum</div>
                     <a href="https://redaelmakroum.dev" target="_blank" class="sidebar-link">redaelmakroum.dev</a>
                 </div>
 
@@ -1506,47 +1479,7 @@
             </div>
 
             <!-- Battery Lab View -->
-            <div id="battery-view" style="display: none;">
-                <div class="chat-messages" id="battery-messages">
-                    <div class="chat-welcome">
-                        <h2>Battery Lab</h2>
-                        <p>Explore battery DR feasibility through conversation. Change parameters, run optimization scenarios, and assess what flexibility your battery can provide to the aggregator.</p>
 
-                        <div class="chat-examples">
-                            <div class="chat-example" onclick="useBatteryExample(this.textContent)">
-                                Can the battery deliver 3 kW between 17:00 and 19:00?
-                            </div>
-                            <div class="chat-example" onclick="useBatteryExample(this.textContent)">
-                                Show me the current battery state
-                            </div>
-                            <div class="chat-example" onclick="useBatteryExample(this.textContent)">
-                                Set the SoC to 40% and re-run the 3 kW scenario
-                            </div>
-                            <div class="chat-example" onclick="useBatteryExample(this.textContent)">
-                                What's the maximum kW we can sustain for 3 hours during peak?
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="chat-input-container">
-                    <div class="chat-input-wrapper">
-                        <div class="model-selector-wrapper">
-                            <div class="model-selector" id="battery-model-selector">
-                                <span id="battery-selected-model-display">gpt-oss-120b</span>
-                            </div>
-                        </div>
-                        <textarea
-                            class="chat-input"
-                            id="battery-input"
-                            placeholder="e.g., Can the battery deliver 3 kW for 2 hours during evening peak?"
-                            rows="1"
-                            onkeydown="handleBatteryKeyDown(event)"
-                        ></textarea>
-                        <button class="chat-send-btn" id="battery-send-btn" onclick="handleBatterySendClick()">Send</button>
-                    </div>
-                </div>
-            </div>
 
             <!-- DR Events View (Prosumer) -->
             <div id="dr-events-view" style="display: none; flex-direction: column; height: 100%; overflow-y: auto; padding: 24px;">
@@ -1585,11 +1518,6 @@
                         <h2>Message Your Aggregator</h2>
                         <p>Send updates about your household to the flexibility aggregator. Changes to assets, preferences, or availability are processed automatically and reflected in the aggregator's portfolio.</p>
 
-                        <div class="sandbox-indicator" id="sandbox-indicator">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                            <span>Sandbox mode -- changes apply to portfolio_sandbox.json only</span>
-                            <button onclick="resetSandbox()">Reset Sandbox</button>
-                        </div>
 
                         <div class="chat-examples">
                             <h3 style="font-size: 16px; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Asset Updates</h3>
@@ -1921,6 +1849,9 @@
         // View switching
         function showView(view) {
             currentView = view;
+            // Update badges immediately on every view switch
+            checkPendingDREvents();
+            checkAggregatorNotifications();
 
             // Hide all views
             document.getElementById('aggregator-view').style.display = 'none';
@@ -1930,7 +1861,6 @@
             document.getElementById('dashboard-view').style.display = 'none';
             document.getElementById('details-section').style.display = 'none';
             document.getElementById('chats-view').style.display = 'none';
-            document.getElementById('battery-view').style.display = 'none';
 
             // Show selected view
             if (view === 'aggregator') {
@@ -1939,8 +1869,6 @@
                 loadHouseholdRequests();
             } else if (view === 'prosumer-comm') {
                 document.getElementById('prosumer-comm-view').style.display = 'flex';
-            } else if (view === 'battery') {
-                document.getElementById('battery-view').style.display = 'flex';
             } else if (view === 'chat') {
                 document.getElementById('chat-view').style.display = 'flex';
                 checkPendingDREvents();
@@ -1969,7 +1897,7 @@
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            const navMap = { chat: 'nav-chat', 'prosumer-comm': 'nav-prosumer-comm', 'dr-events': 'nav-dr-events', aggregator: 'nav-aggregator', battery: 'nav-battery', chats: 'nav-chats', dashboard: 'nav-dashboard', details: 'nav-details' };
+            const navMap = { chat: 'nav-chat', 'prosumer-comm': 'nav-prosumer-comm', 'dr-events': 'nav-dr-events', aggregator: 'nav-aggregator', chats: 'nav-chats', dashboard: 'nav-dashboard', details: 'nav-details' };
             const navItem = document.getElementById(navMap[view] || 'nav-chat');
             if (navItem) navItem.classList.add('active');
         }
@@ -2138,7 +2066,7 @@
                 const status = run.success ?
                     '<span class="status-badge status-success">Success</span>' :
                     '<span class="status-badge status-failed">Failed</span>';
-                const appliances = run.appliances_scheduled.join(', ').substring(0, 30) + '...';
+                const appliances = (run.appliances_scheduled || []).join(', ').substring(0, 30) || '--';
                 const duration = (run.duration_seconds || 0).toFixed(1);
 
                 return `
@@ -2147,7 +2075,7 @@
                         <td>${model}</td>
                         <td class="prompt-cell" data-full-prompt="${escapeHtml(prompt)}">${prompt}</td>
                         <td>${status}</td>
-                        <td>${run.num_appliances} (${appliances})</td>
+                        <td>${run.num_appliances || '--'} ${appliances !== '--' ? '(' + appliances + ')' : ''}</td>
                         <td>${duration}s</td>
                         <td>${run.iterations}</td>
                         <td>${(run.total_tokens / 1000).toFixed(1)}k</td>
@@ -2986,6 +2914,7 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
+                let sseBuffer = '';
 
                 while (true) {
                     const { done, value } = await reader.read();
@@ -2995,7 +2924,9 @@
                     }
 
                     const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
+                    sseBuffer += chunk;
+                    const lines = sseBuffer.split('\n');
+                    sseBuffer = lines.pop();
 
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
@@ -3426,13 +3357,16 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
+                let sseBuffer = '';
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
 
                     const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
+                    sseBuffer += chunk;
+                    const lines = sseBuffer.split('\n');
+                    sseBuffer = lines.pop();
 
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
@@ -3494,274 +3428,6 @@
             input.disabled = false;
             sendBtn.disabled = false;
             if (sendBtn.textContent === 'Send') input.focus();
-        }
-
-        // ============ BATTERY LAB ============
-        let batteryHistory = [];
-
-        function useBatteryExample(text) {
-            document.getElementById('battery-input').value = text.trim();
-            document.getElementById('battery-input').focus();
-        }
-
-        function handleBatteryKeyDown(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendBatteryMessage();
-            }
-        }
-
-        function handleBatterySendClick() {
-            const btn = document.getElementById('battery-send-btn');
-            if (btn.textContent === 'New Chat') {
-                resetBatteryChat();
-            } else {
-                sendBatteryMessage();
-            }
-        }
-
-        function resetBatteryChat() {
-            const messagesContainer = document.getElementById('battery-messages');
-            const welcome = messagesContainer.querySelector('.chat-welcome');
-            messagesContainer.innerHTML = '';
-            if (welcome) messagesContainer.appendChild(welcome);
-            welcome.style.display = '';
-            document.getElementById('battery-send-btn').textContent = 'Send';
-            document.getElementById('battery-input').value = '';
-            document.getElementById('battery-input').disabled = false;
-            document.getElementById('battery-send-btn').disabled = false;
-            batteryHistory = [];
-        }
-
-        function addBatteryMessage(content, isUser = false) {
-            const messagesContainer = document.getElementById('battery-messages');
-            const welcome = messagesContainer.querySelector('.chat-welcome');
-            if (welcome) welcome.style.display = 'none';
-
-            const time = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-            const avatar = isUser
-                ? `<svg viewBox="0 0 24 24" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                   </svg>`
-                : `<svg viewBox="0 0 24 24" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;">
-                    <rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect>
-                    <line x1="23" y1="13" x2="23" y2="11"></line>
-                   </svg>`;
-
-            const div = document.createElement('div');
-            div.className = `chat-message ${isUser ? 'user' : ''}`;
-            div.innerHTML = `
-                <div class="chat-message-avatar">${avatar}</div>
-                <div>
-                    <div class="chat-message-content">${content}</div>
-                    <div class="chat-message-time">${time}</div>
-                </div>
-            `;
-            messagesContainer.appendChild(div);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        async function sendBatteryMessage() {
-            const input = document.getElementById('battery-input');
-            const sendBtn = document.getElementById('battery-send-btn');
-            const prompt = input.value.trim();
-            const selectedModel = currentSelectedModel;
-
-            if (!prompt) return;
-
-            input.disabled = true;
-            sendBtn.disabled = true;
-
-            addBatteryMessage(prompt, true);
-            batteryHistory.push({ role: 'user', content: prompt });
-            input.value = '';
-
-            // Create streaming container
-            const messagesContainer = document.getElementById('battery-messages');
-            const time = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-            const streamingDiv = document.createElement('div');
-            streamingDiv.className = 'chat-message';
-            streamingDiv.id = 'battery-streaming';
-            streamingDiv.innerHTML = `
-                <div class="chat-message-avatar">
-                    <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;">
-                        <rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect>
-                        <line x1="23" y1="13" x2="23" y2="11"></line>
-                    </svg>
-                </div>
-                <div>
-                    <div class="chat-message-content">
-                        <div class="chat-thinking">
-                            <div class="chat-thinking-header">Battery Lab Agent (Live)</div>
-                            <div id="battery-streaming-content"></div>
-                            <div class="streaming-indicator" id="battery-streaming-indicator">
-                                <div class="dot"></div>
-                                <div class="dot"></div>
-                                <div class="dot"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chat-message-time">${time}</div>
-                </div>
-            `;
-            messagesContainer.appendChild(streamingDiv);
-
-            const streamingContent = document.getElementById('battery-streaming-content');
-            const streamingIndicator = document.getElementById('battery-streaming-indicator');
-            let fullOutput = '';
-
-            try {
-                const response = await fetch('/api/battery/stream', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: prompt,
-                        history: batteryHistory.slice(0, -1),
-                        model: selectedModel
-                    })
-                });
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
-
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            try {
-                                const data = JSON.parse(line.slice(6));
-                                if (data.type === 'stdout') {
-                                    fullOutput += data.content;
-                                    // Show raw output in streaming div
-                                    streamingContent.innerHTML = `<pre style="white-space: pre-wrap; font-size: 12px; margin: 0; color: var(--text-secondary);">${escapeHtml(fullOutput)}</pre>`;
-                                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                                } else if (data.type === 'done') {
-                                    if (streamingIndicator) streamingIndicator.remove();
-
-                                    // Extract the final response between delimiters
-                                    const responseMatch = fullOutput.match(/BATTERY_LAB_RESPONSE\n={80}\n([\s\S]*?)={80}/);
-                                    let finalResponse = responseMatch ? responseMatch[1].trim() : fullOutput;
-
-                                    // Store in history
-                                    batteryHistory.push({ role: 'assistant', content: finalResponse });
-
-                                    // Render: collapsible trace + formatted response
-                                    const { html: traceHtml, sectionCount } = formatBatteryTrace(fullOutput);
-                                    streamingDiv.querySelector('.chat-message-content').innerHTML = `
-                                        ${renderCollapsibleTrace('Battery Lab Trace', traceHtml, sectionCount)}
-                                        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color);">
-                                            ${formatMarkdown(finalResponse)}
-                                        </div>
-                                    `;
-                                    streamingDiv.removeAttribute('id');
-                                } else if (data.type === 'error') {
-                                    if (streamingIndicator) streamingIndicator.remove();
-                                    streamingDiv.remove();
-                                    addBatteryMessage('Error: ' + data.content);
-                                }
-                            } catch (e) {
-                                console.error('Error parsing SSE:', e);
-                            }
-                        }
-                    }
-                }
-            } catch (error) {
-                if (streamingIndicator) streamingIndicator.remove();
-                const sm = document.getElementById('battery-streaming');
-                if (sm) sm.remove();
-                addBatteryMessage('Failed to connect to API. Make sure the Flask server is running on port 5000.');
-            }
-
-            input.disabled = false;
-            sendBtn.disabled = false;
-            input.focus();
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function formatBatteryTrace(rawOutput) {
-            // Split on section header lines (=== ... ===)
-            const escaped = escapeHtml(rawOutput);
-            const lines = escaped.split('\n');
-            let sections = [];
-            let currentSection = null;
-            let currentLines = [];
-
-            for (const line of lines) {
-                // Detect header separator lines (====...)
-                if (line.match(/^={50,}/)) {
-                    // If we had content before, push it
-                    if (currentSection !== null) {
-                        sections.push({ header: currentSection, content: currentLines.join('\n') });
-                        currentLines = [];
-                    } else if (currentLines.length > 0) {
-                        // Pre-header content
-                        sections.push({ header: null, content: currentLines.join('\n') });
-                        currentLines = [];
-                    }
-                    currentSection = '__separator__';
-                    continue;
-                }
-
-                // Line right after a separator is the header text
-                if (currentSection === '__separator__') {
-                    currentSection = line.trim();
-                    continue;
-                }
-
-                currentLines.push(line);
-            }
-            // Push remaining content
-            if (currentLines.length > 0) {
-                sections.push({ header: currentSection === '__separator__' ? null : currentSection, content: currentLines.join('\n') });
-            }
-
-            // Filter out empty sections and separators
-            sections = sections.filter(s => s.content.trim().length > 0 || s.header);
-
-            // Count real sections (those with headers)
-            const sectionCount = sections.filter(s => s.header && s.header !== '__separator__').length;
-
-            // Build HTML
-            let html = '';
-            for (const section of sections) {
-                if (section.header && section.header !== '__separator__') {
-                    html += `<div style="
-                        margin: 8px 0 4px 0;
-                        padding: 4px 10px;
-                        background: var(--bg-tertiary, #2a2a3e);
-                        border-left: 3px solid var(--accent-primary, #6366f1);
-                        border-radius: 0 4px 4px 0;
-                        font-weight: 600;
-                        font-size: 11px;
-                        letter-spacing: 0.5px;
-                        color: var(--accent-primary, #6366f1);
-                        text-transform: uppercase;
-                    ">${section.header}</div>`;
-                }
-                if (section.content.trim()) {
-                    html += `<pre style="
-                        white-space: pre-wrap;
-                        font-size: 11.5px;
-                        margin: 0 0 2px 0;
-                        padding: 4px 8px;
-                        color: var(--text-secondary);
-                        line-height: 1.5;
-                    ">${section.content}</pre>`;
-                }
-            }
-
-            return { html, sectionCount };
         }
 
         // ============ CHATS VIEW ============
@@ -3939,6 +3605,7 @@
         let expandedEventIds = new Set();
         let expandedHouseholdReqs = new Set();
         let eventLogCache = {};
+        let seenEventResponses = new Set();
 
         function fmtTime(isoStr) {
             if (!isoStr) return '--';
@@ -4565,11 +4232,62 @@
             }
         }
 
+        // Aggregator-side: check for new responses or unacknowledged requests
+        async function checkAggregatorNotifications() {
+            try {
+                const [eventsResp, reqsResp] = await Promise.all([
+                    fetch('/api/dr-events').then(r => r.json()),
+                    fetch('/api/household-requests').then(r => r.json())
+                ]);
+
+                // Mark all current responses as seen when on aggregator view
+                if (currentView === 'aggregator' && eventsResp.success) {
+                    eventsResp.events
+                        .filter(e => e.status === 'accepted' || e.status === 'rejected')
+                        .forEach(e => seenEventResponses.add(e.event_id));
+                }
+
+                let count = 0;
+                if (eventsResp.success) {
+                    count += eventsResp.events.filter(e =>
+                        (e.status === 'accepted' || e.status === 'rejected') &&
+                        !seenEventResponses.has(e.event_id)
+                    ).length;
+                }
+                if (reqsResp.success) {
+                    count += reqsResp.requests.filter(r => r.status !== 'acknowledged').length;
+                }
+
+                const badge = document.getElementById('agg-badge');
+                if (badge) {
+                    if (count > 0 && currentView !== 'aggregator') {
+                        badge.style.display = '';
+                        badge.textContent = count;
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            } catch (e) {
+                console.log('Could not check aggregator notifications:', e);
+            }
+        }
+
         // Prosumer-side: check for pending DR events
         async function checkPendingDREvents() {
             try {
                 const response = await fetch('/api/dr-events/pending?household_id=HH-001');
                 const data = await response.json();
+
+                // Update badge
+                const badge = document.getElementById('dr-badge');
+                if (badge) {
+                    if (data.success && data.pending_events.length > 0 && currentView !== 'chat') {
+                        badge.style.display = '';
+                        badge.textContent = data.pending_events.length;
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
 
                 if (data.success && data.pending_events.length > 0) {
                     const event = data.pending_events[0]; // Show most recent
@@ -4664,13 +4382,16 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
+                let sseBuffer = '';
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
 
                     const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
+                    sseBuffer += chunk;
+                    const lines = sseBuffer.split('\n');
+                    sseBuffer = lines.pop();
 
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
@@ -4768,6 +4489,7 @@
                 const data = await response.json();
                 if (data.success) {
                     addChatMessage('DR event rejected. Response sent to aggregator.');
+                    checkAggregatorNotifications();
                     const notif = document.getElementById(`dr-notification-${eventId}`);
                     if (notif) notif.remove();
                 } else {
@@ -4825,6 +4547,7 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
+                let sseBuffer = '';
                 let fullOutput = '';
 
                 while (true) {
@@ -4832,7 +4555,9 @@
                     if (done) break;
 
                     const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
+                    sseBuffer += chunk;
+                    const lines = sseBuffer.split('\n');
+                    sseBuffer = lines.pop();
 
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
@@ -4882,6 +4607,7 @@
                                         });
                                         // Remove the initial notification card to prevent stale reject
                                         document.querySelectorAll('[id^="dr-notification-"]').forEach(el => el.remove());
+                                        checkAggregatorNotifications();
                                     }
 
                                     messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -4946,6 +4672,7 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
+                let sseBuffer = '';
                 let fullOutput = '';
 
                 while (true) {
@@ -4953,7 +4680,9 @@
                     if (done) break;
 
                     const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
+                    sseBuffer += chunk;
+                    const lines = sseBuffer.split('\n');
+                    sseBuffer = lines.pop();
 
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
@@ -5085,8 +4814,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         household_id: 'HH-001',
-                        message: message,
-                        sandbox: true
+                        message: message
                     })
                 });
                 const data = await resp.json();
@@ -5112,29 +4840,7 @@
             btn.textContent = 'Send';
         }
 
-        async function resetSandbox() {
-            try {
-                const resp = await fetch('/api/portfolio/reset-sandbox', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                const data = await resp.json();
-                if (data.success) {
-                    // Clear messages and show welcome again
-                    const container = document.getElementById('prosumer-comm-messages');
-                    // Remove all bubbles
-                    container.querySelectorAll('.prosumer-comm-bubble').forEach(b => b.remove());
-                    // Show welcome
-                    const welcome = document.getElementById('prosumer-comm-welcome');
-                    if (welcome) welcome.style.display = '';
-                    alert('Sandbox portfolio reset to base state.');
-                } else {
-                    alert('Failed to reset sandbox: ' + (data.error || 'Unknown error'));
-                }
-            } catch (err) {
-                alert('Network error: ' + err.message);
-            }
-        }
+
 
         function initRoleRouting() {
             const params = new URLSearchParams(window.location.search);
@@ -5182,6 +4888,19 @@
             setInterval(checkForHotReload, 5000);
             console.log('Hot reload enabled');
         }
+
+        // Seed seen set with existing responses so badge only shows NEW ones
+        fetch('/api/dr-events').then(r => r.json()).then(data => {
+            if (data.success) {
+                data.events
+                    .filter(e => e.status === 'accepted' || e.status === 'rejected')
+                    .forEach(e => seenEventResponses.add(e.event_id));
+            }
+        }).catch(() => {});
+
+        // Always poll for notifications (badges + in-chat notification)
+        setInterval(checkPendingDREvents, 5000);
+        setInterval(checkAggregatorNotifications, 5000);
 
         // Load initial data for dashboard
         loadRunData();
