@@ -45,7 +45,7 @@ The CDR system implements bidirectional conversational demand response between a
                                   +----------+-----------+
                                   | Battery Optimizer     |
                                   | battery_optimizer.py  |
-                                  | (MILP via scipy)      |
+                                  | (MILP via PuLP/CBC)   |
                                   +----------------------+
 ```
 
@@ -70,7 +70,7 @@ The CDR system implements bidirectional conversational demand response between a
    - Classifies intent (availability, constraint, asset update, etc.)
    - Extracts structured changes
    - Generates a confirmation message
-3. Changes are applied to the sandbox portfolio (`data/portfolio_sandbox.json`)
+3. Changes are applied to the portfolio (`data/portfolio.json`)
 4. A household request record is created in `data/household_requests/`
 
 ## ReAct Loop

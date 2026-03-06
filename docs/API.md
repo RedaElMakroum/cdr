@@ -31,8 +31,8 @@ Run the HEMS orchestrator with SSE streaming. Rate limit: 20/min.
 Same body as `/api/run`. Returns Server-Sent Events with iteration progress.
 
 **SSE event types:**
-- `iteration`: ReAct loop step with thought/action/observation
-- `result`: Final result
+- `stdout`: ReAct loop output (streamed line by line)
+- `done`: Stream complete (includes return code)
 - `error`: Error message
 
 ### `GET /api/models`
@@ -126,13 +126,8 @@ Process a free-text prosumer message. Rate limit: 10/min.
 }
 ```
 
-### `POST /api/portfolio/reset-sandbox`
-Reset the sandbox portfolio to base state. Rate limit: 10/min.
-
 ### `GET /api/portfolio`
 Get portfolio status. Rate limit: 30/min.
-
-**Query params:** `sandbox=true` (default) or `sandbox=false`.
 
 ## Household Requests
 
@@ -144,11 +139,6 @@ List all household requests. Rate limit: 30/min.
 
 ### `POST /api/household-requests/<request_id>/acknowledge`
 Acknowledge a household request. Rate limit: 30/min.
-
-## Battery
-
-### `POST /api/battery/stream`
-Run the battery specialist agent with SSE streaming. Rate limit: 30/min.
 
 ## Run History
 
