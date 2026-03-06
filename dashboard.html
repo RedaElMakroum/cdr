@@ -1979,7 +1979,7 @@
             try {
                 console.log('[Dashboard] Loading run data...');
 
-                const response = await fetch('http://localhost:5000/api/runs');
+                const response = await fetch('/api/runs');
                 const data = await response.json();
 
                 if (!data.success) {
@@ -2290,7 +2290,7 @@
                 const recentlyUsed = getRecentlyUsedModels();
                 const recentlyUsedParam = recentlyUsed.join(',');
 
-                const response = await fetch(`http://localhost:5000/api/models?recently_used=${encodeURIComponent(recentlyUsedParam)}`);
+                const response = await fetch(`/api/models?recently_used=${encodeURIComponent(recentlyUsedParam)}`);
 
                 if (response.ok) {
                     const data = await response.json();
@@ -2971,7 +2971,7 @@
             try {
                 console.log('[Dashboard] Starting orchestrator request:', prompt);
 
-                const response = await fetch('http://localhost:5000/api/run/stream', {
+                const response = await fetch('/api/run/stream', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -3418,7 +3418,7 @@
             let fullOutput = '';
 
             try {
-                const response = await fetch('http://localhost:5000/api/aggregator/stream', {
+                const response = await fetch('/api/aggregator/stream', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: enrichedPrompt, model: selectedModel })
@@ -3612,7 +3612,7 @@
             let fullOutput = '';
 
             try {
-                const response = await fetch('http://localhost:5000/api/battery/stream', {
+                const response = await fetch('/api/battery/stream', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -3784,7 +3784,7 @@
 
         async function loadChats() {
             try {
-                const resp = await fetch('http://localhost:5000/api/runs');
+                const resp = await fetch('/api/runs');
                 const data = await resp.json();
                 if (!data.success) return;
 
@@ -3954,7 +3954,7 @@
         async function fetchEventLog(eventId) {
             if (eventLogCache[eventId]) return eventLogCache[eventId];
             try {
-                const resp = await fetch(`http://localhost:5000/api/dr-event/${eventId}/log`);
+                const resp = await fetch(`/api/dr-event/${eventId}/log`);
                 const data = await resp.json();
                 if (data.success) {
                     eventLogCache[eventId] = data.entries;
@@ -4182,7 +4182,7 @@
 
             // Fetch event data and log
             const [evtResp, logEntries] = await Promise.all([
-                fetch(`http://localhost:5000/api/dr-events`).then(r => r.json()),
+                fetch(`/api/dr-events`).then(r => r.json()),
                 fetchEventLog(eventId)
             ]);
             const event = evtResp.events?.find(e => e.event_id === eventId);
@@ -4193,7 +4193,7 @@
 
         async function loadDREvents() {
             try {
-                const response = await fetch('http://localhost:5000/api/dr-events');
+                const response = await fetch('/api/dr-events');
                 const data = await response.json();
 
                 // Check for status changes (reuses fetched data, no extra API call)
@@ -4304,7 +4304,7 @@
                 if (oldStatus && oldStatus !== newStatus && (newStatus === 'accepted' || newStatus === 'rejected')) {
                     knownEventStatuses[eid] = newStatus;
                     try {
-                        const respData = await fetch(`http://localhost:5000/api/dr-event/${eid}/response`).then(r => r.json());
+                        const respData = await fetch(`/api/dr-event/${eid}/response`).then(r => r.json());
                         const shortId = eid.replace('DR-2026-02-', '').replace('DR-2025-', '');
                         const drWindow = `${event.window_start}-${event.window_end}`;
 
@@ -4350,7 +4350,7 @@
         // Household inbox: acknowledge a request
         async function ackHouseholdReq(reqId) {
             try {
-                await fetch(`http://localhost:5000/api/household-requests/${reqId}/acknowledge`, { method: 'POST' });
+                await fetch(`/api/household-requests/${reqId}/acknowledge`, { method: 'POST' });
             } catch (e) {
                 console.log('Ack failed, updating UI anyway');
             }
@@ -4362,7 +4362,7 @@
         // Household requests polling for aggregator inbox
         async function loadHouseholdRequests() {
             try {
-                const response = await fetch('http://localhost:5000/api/household-requests');
+                const response = await fetch('/api/household-requests');
                 const data = await response.json();
 
                 if (data.success && data.requests.length > 0) {
@@ -4440,7 +4440,7 @@
         // Prosumer DR Events management view
         async function loadProsumerDREvents() {
             try {
-                const response = await fetch('http://localhost:5000/api/dr-events');
+                const response = await fetch('/api/dr-events');
                 const data = await response.json();
 
                 const emptyEl = document.getElementById('dr-events-empty');
@@ -4568,7 +4568,7 @@
         // Prosumer-side: check for pending DR events
         async function checkPendingDREvents() {
             try {
-                const response = await fetch('http://localhost:5000/api/dr-events/pending?household_id=HH-001');
+                const response = await fetch('/api/dr-events/pending?household_id=HH-001');
                 const data = await response.json();
 
                 if (data.success && data.pending_events.length > 0) {
@@ -4656,7 +4656,7 @@
             let fullOutput = '';
 
             try {
-                const response = await fetch(`http://localhost:5000/api/dr-event/${eventId}/respond/stream`, {
+                const response = await fetch(`/api/dr-event/${eventId}/respond/stream`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: '', model: currentSelectedModel })
@@ -4754,7 +4754,7 @@
         // Direct reject for pre-evaluation (no conversation context yet)
         async function rejectDREventDirect(eventId) {
             try {
-                const response = await fetch(`http://localhost:5000/api/dr-event/${eventId}/submit-response`, {
+                const response = await fetch(`/api/dr-event/${eventId}/submit-response`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -4817,7 +4817,7 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
             try {
-                const response = await fetch(`http://localhost:5000/api/dr-event/${eventId}/respond/stream`, {
+                const response = await fetch(`/api/dr-event/${eventId}/respond/stream`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: message, model: currentSelectedModel })
@@ -4938,7 +4938,7 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
             try {
-                const response = await fetch(`http://localhost:5000/api/dr-event/${eventId}/respond/stream`, {
+                const response = await fetch(`/api/dr-event/${eventId}/respond/stream`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: message, model: currentSelectedModel })
