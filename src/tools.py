@@ -877,14 +877,9 @@ This window has the minimum sum across all {tool_data['window_count']} evaluated
         recommended_slot = int(slot_match.group(1))
 
     # Determine duration from config (PRIORITY 2 FIX: Always use config defaults, don't extract from user_request)
-    # For heat pump, duration comes from thermal model
-    if appliance_id == "heat_pump":
-        # Heat pump duration is variable based on thermal model
-        duration_slots = thermal_data.get("heating_slots_needed", 24)  # Default 6 hours
-    else:
-        # For all other appliances, ALWAYS use config defaults
-        # This ensures consistent durations across runs (e.g., dishwasher always 90 min, washing_machine always 120 min)
-        duration_slots = AVAILABLE_APPLIANCES[appliance_id]["default_duration_minutes"] // 15
+    # For all appliances, ALWAYS use config defaults
+    # This ensures consistent durations across runs (e.g., dishwasher always 90 min, washing_machine always 120 min)
+    duration_slots = AVAILABLE_APPLIANCES[appliance_id]["default_duration_minutes"] // 15
 
     # Validate and correct 24-hour boundary constraint
     if recommended_slot + duration_slots > 96:
@@ -902,18 +897,15 @@ This window has the minimum sum across all {tool_data['window_count']} evaluated
         cost_match = re.search(r"\$\\boxed\{(\d+\.\d+)\}\$", agent_response)
     if not cost_match:
         # Final fallback: calculate cost from prices directly
-        if appliance_id != "heat_pump":
-            try:
-                window_prices = prices_data['prices'][recommended_slot:recommended_slot + duration_slots]
-                power_kw = AVAILABLE_APPLIANCES[appliance_id]["power_rating_kw"]
-                # Cost = sum of (price * power * 0.25 hours per slot) / 1000
-                # Divide by 1000 to convert EUR/MWh to EUR
-                cost = sum(price * power_kw * 0.25 / 1000 for price in window_prices)
-                print(f"     ℹ Calculated cost from prices: €{cost:.4f}")
-            except Exception as e:
-                print(f"     ⚠ Could not calculate cost: {e}")
-                cost = None
-        else:
+        try:
+            window_prices = prices_data['prices'][recommended_slot:recommended_slot + duration_slots]
+            power_kw = AVAILABLE_APPLIANCES[appliance_id]["power_rating_kw"]
+            # Cost = sum of (price * power * 0.25 hours per slot) / 1000
+            # Divide by 1000 to convert EUR/MWh to EUR
+            cost = sum(price * power_kw * 0.25 / 1000 for price in window_prices)
+            print(f"     ℹ Calculated cost from prices: €{cost:.4f}")
+        except Exception as e:
+            print(f"     ⚠ Could not calculate cost: {e}")
             cost = None
     else:
         cost = float(cost_match.group(1))

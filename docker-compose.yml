@@ -17,14 +17,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  cdr-dashboard:
-    image: python:3.11-slim
-    container_name: cdr-dashboard
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./dashboard.html:/app/dashboard.html:ro
-    working_dir: /app
-    command: python -m http.server 8000
-    restart: unless-stopped

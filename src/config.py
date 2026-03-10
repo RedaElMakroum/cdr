@@ -3,6 +3,7 @@ Configuration for HEMS agent with cost optimization settings.
 """
 
 import os
+import warnings
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -23,7 +24,12 @@ CEREBRAS_MODEL = os.getenv("CEREBRAS_MODEL", "gpt-oss-120b")  # Default: gpt-oss
 
 # Validate that API keys are loaded
 if not ENTSOE_API_KEY:
-    raise ValueError("ENTSOE_API_KEY not found. Copy .env.example to .env and add your API key.")
+    warnings.warn(
+        "ENTSOE_API_KEY not found. Live price fetching will be unavailable. "
+        "The benchmark and local CSV profiles will still work. "
+        "To enable live prices, copy .env.example to .env and add your ENTSO-E API key."
+    )
+    ENTSOE_API_KEY = None
 if not CEREBRAS_API_KEY:
     raise ValueError("CEREBRAS_API_KEY not found. Copy .env.example to .env and add your API key.")
 

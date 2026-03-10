@@ -57,8 +57,9 @@ python src/api.py
 cp .env.example .env
 # Edit .env with your API keys
 docker compose up --build
-# Dashboard: http://localhost:8000
-# API: http://localhost:5001
+# Open the dashboard:
+# Aggregator view: http://localhost:5001/?role=aggregator
+# Prosumer view:   http://localhost:5001/?role=prosumer
 ```
 
 ## Architecture
